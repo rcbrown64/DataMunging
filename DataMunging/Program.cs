@@ -1,26 +1,25 @@
 ﻿using DataMunging.Common.Utilities.FileSystem;
 using DataMunging.Common.Utilities.Parsing;
 using DataMunging.Data.DTOs;
+using DataMunging.Data.Interfaces;
 
-var lines = new
+var lines = new List<(Type Type, IEnumerable<string> Data)>()
 {
-    Weather = FileUtils.GetFileLines(@"Assets\weather.dat"),
-    Football = FileUtils.GetFileLines(@"Assets\football.dat")
+    (typeof(WeatherData), FileUtils.GetFileLines(@"Assets\weather.dat")),
+    (typeof(FootballData), FileUtils.GetFileLines(@"Assets\football.dat"))
 };
 
-var minWeatherData = 
-    (from line in lines.Weather
-     let weatherData = FlatFileParser.Parse<WeatherData>(line)
-     where weatherData.Dy != 0
-     orderby weatherData.GetSpread()
-     select weatherData).First();
-
-var minFootballData =
-    (from line in lines.Football
-     let footballData = FlatFileParser.Parse<FootballData>(line)
-     where footballData.Team != null
-     orderby footballData.GetSpread()
-     select footballData).First();
-
-Console.WriteLine($"Smallest spread - Day: {minWeatherData.GetSubject()}, Spread width: {minWeatherData.GetSpread()}.");
-Console.WriteLine($"Smallest spread - Team: {minFootballData.GetSubject()}, Spread width: {minFootballData.GetSpread()}.");
+foreach (var fileData in lines)
+{
+    var isWeather = fileData.Type == typeof(WeatherData);
+    var query =
+        (from line in fileData.Data
+            let data = isWeather
+             ? (IData)FlatFileParser.Parse<WeatherData>(line)
+             : FlatFileParser.Parse<FootballData>(line)
+         where data.GetVal1() != 0 && data.GetVal2() != 0
+         orderby data.GetSpread()
+         select data).First();
+    
+    Console.WriteLine($"Smallest spread - {(isWeather ? "Day" : "Team")}: {query.GetSubject()}, Spread width: {query.GetSpread()}.");
+}
