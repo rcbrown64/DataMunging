@@ -1,27 +1,40 @@
 ﻿using System.Text.RegularExpressions;
-using DataMunging.Weather.DTOs;
+using DataMunging.Data.DTOs;
+using DataMunging.Data.Interfaces;
 
 namespace DataMunging.Common.Utilities.Parsing
 {
     public static class FlatFileParser
     {
+        /*
+         * Football    - return subject, for, against, parse success
+         * WeatherData - return subject, upper, lower, parse success
+         */
         public static T Parse<T>(string input)
         {
-            if (typeof(T) != typeof(WeatherData)) 
-                throw new NotImplementedException();
-            
-            var pattern = @"^([\s0-9]{4})([\s0-9]{4})[\s*]{2}([\s0-9]{4}).*?$";
-            var weatherData = new WeatherData();
-                
-            if (Regex.Match(input, pattern).Success)
+            var patterns = new
             {
-                var matches = Regex.Matches(input, pattern);
-                weatherData.Dy = int.Parse(matches[0].Groups[1].Value);
-                weatherData.MxT = int.Parse(matches[0].Groups[2].Value);
-                weatherData.MnT = int.Parse(matches[0].Groups[3].Value);
+                Weather = @"^([\s0-9]{4})([\s0-9]{4})[\s*]{2}([\s0-9]{4}).*?$",
+                Football = @"^[\d\s.]{7}([_a-zA-Z\s]{16})[\d\s]{6}[\d\s]{4}[\d\s]{6}([\d\s]{6})[\s-]{5}([\d\s]{6}).*$",
+            };
+
+            var regex = new Regex(typeof(T) == typeof(WeatherData) 
+                ? patterns.Weather 
+                : patterns.Football);
+            var match = regex.Match(input);
+            IData result = typeof(T) == typeof(WeatherData)
+                ? new WeatherData()
+                : new FootballData();
+
+            if (match.Success)
+            {
+                var groups = match.Groups;
+                result.SetSubject(groups[1].Value.Trim());
+                result.SetVal1(int.Parse(groups[2].Value.Trim()));
+                result.SetVal2(int.Parse(groups[3].Value.Trim()));
             }
-                
-            return (T)(object)weatherData;
+
+            return (T)result;
         }
     }
 }

@@ -1,6 +1,7 @@
-﻿namespace DataMunging.Weather.DTOs
+﻿using DataMunging.Common.Interfaces;
+namespace DataMunging.Weather.DTOs
 {
-    public class WeatherData
+    public class WeatherData : IData
     {
         public int Dy { get; set; }
         public double MxT { get; set; }
