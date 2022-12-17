@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DataMunging.Common\DataMunging.Common.csproj" />
-    <ProjectReference Include="..\DataMunging.Weather\DataMunging.Weather.csproj" />
+    <ProjectReference Include="..\DataMunging.Data\DataMunging.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>
