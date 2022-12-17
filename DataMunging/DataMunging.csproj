@@ -7,4 +7,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataMunging.Common\DataMunging.Common.csproj" />
+    <ProjectReference Include="..\DataMunging.Weather\DataMunging.Weather.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\football.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\weather.dat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
